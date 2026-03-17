@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twelve-Factor App Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F7F5F0;
+    --surface: #FFFFFF;
+    --border: #E2DDD6;
+    --text: #1A1916;
+    --muted: #7A7672;
+    --accent: #2A6B4F;
+    --accent-light: #E1F5EE;
+    --accent-dark: #1A4432;
+    --warn: #BA7517;
+    --danger: #A32D2D;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    color-scheme: light;
+  }
+
+  [data-theme="dark"] {
+    --bg: #111210;
+    --surface: #1C1E1B;
+    --border: #2E3229;
+    --text: #E8E6DF;
+    --muted: #7A7D74;
+    --accent: #4BBD8A;
+    --accent-light: #0D2B1F;
+    --accent-dark: #9FE1CB;
+    --warn: #EF9F27;
+    --danger: #F09595;
+    color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #111210;
+      --surface: #1C1E1B;
+      --border: #2E3229;
+      --text: #E8E6DF;
+      --muted: #7A7D74;
+      --accent: #4BBD8A;
+      --accent-light: #0D2B1F;
+      --accent-dark: #9FE1CB;
+      --warn: #EF9F27;
+      --danger: #F09595;
+      color-scheme: dark;
+    }
+  }
+
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1rem 5rem;
+  }
+
+  .shell {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  header {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: var(--serif);
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .progress-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  .progress-label { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+  .progress-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-bottom: 2rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s cubic-bezier(.4,0,.2,1);
+  }
+
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.2s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .factor-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 1rem;
+  }
+
+  .question {
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+
+  .hint {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    padding-left: 10px;
+    border-left: 2px solid var(--border);
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option {
+    cursor: pointer;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--surface);
+    text-align: left;
+    line-height: 1.5;
+    transition: border-color 0.15s, background 0.15s, transform 0.1s;
+    position: relative;
+  }
+
+  .option::before {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    margin-right: 10px;
+    vertical-align: -2px;
+    flex-shrink: 0;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .option:hover { border-color: #B5D4B8; background: #FAFDF9; }
+  .option:active { transform: scale(0.99); }
+
+  .option.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--accent-dark);
+  }
+
+  .option.selected::before {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: inset 0 0 0 3px var(--accent-light);
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.75rem;
+  }
+
+  .btn {
+    cursor: pointer;
+    padding: 9px 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: var(--sans);
+    background: var(--surface);
+    color: var(--text);
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .btn:hover { background: var(--bg); }
+  .btn:disabled { opacity: 0.3; cursor: default; }
+
+  .btn.primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .btn.primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+
+  /* Results */
+  .score-banner {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .score-big {
+    font-family: var(--serif);
+    font-size: 3rem;
+    line-height: 1;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .score-meta-label { font-size: 11px; font-family: var(--mono); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .score-verdict { font-size: 1.1rem; font-weight: 500; margin: 4px 0; }
+  .score-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (max-width: 480px) { .results-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .rc-top { display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .rc-tag { font-family: var(--mono); font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .rc-name { font-size: 13px; font-weight: 500; color: var(--text); }
+  .rc-answer { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .dot-good { background: var(--accent); }
+  .dot-partial { background: var(--warn); }
+  .dot-bad { background: var(--danger); }
+
+  .result-card.good { border-color: #9FE1CB; }
+  .result-card.partial { border-color: #FAC775; }
+  .result-card.bad { border-color: #F7C1C1; }
+
+  .footer-note {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 2.5rem;
+    font-family: var(--mono);
+  }
+
+  .footer-note a { color: var(--accent); text-decoration: none; }
+  .footer-note a:hover { text-decoration: underline; }
+
+  .theme-toggle {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    cursor: pointer;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.2s, border-color 0.2s;
+    z-index: 100;
+  }
+  .theme-toggle:hover { background: var(--bg); border-color: var(--muted); }
+</style>
+</head>
+<body>
+<button class="theme-toggle" id="themeBtn" title="Toggle dark mode" onclick="toggleTheme()">
+  <span id="themeIcon">🌙</span>
+</button>
+<div class="shell">
+  <header>
+    <div class="eyebrow">Self-assessment tool</div>
+    <h1>Twelve-Factor App</h1>
+    <p class="subtitle">Answer 12 questions to see how well your deployment processes align with the twelve-factor methodology.</p>
+  </header>
+
+  <div class="progress-row">
+    <span class="progress-label" id="counter">Question 1 of 12</span>
+    <span class="progress-label" id="pct">0%</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progress" style="width:0%"></div></div>
+
+  <div id="quiz-area"></div>
+</div>
+
+<div class="footer-note">Based on <a href="https://12factor.net" target="_blank">12factor.net</a> methodology</div>
+
+<script>
+const factors = [
+  {
+    num: "I", name: "Codebase",
+    q: "How is your application's source code managed?",
+    hint: "One codebase tracked in version control, many deploys.",
+    options: [
+      { text: "Single repo, deployed to multiple environments (dev/staging/prod)", score: 2 },
+      { text: "Multiple repos for the same logical app", score: 0 },
+      { text: "One repo, but only one environment", score: 1 },
+      { text: "No version control used", score: 0 }
+    ]
+  },
+  {
+    num: "II", name: "Dependencies",
+    q: "How do you handle your app's dependencies?",
+    hint: "Dependencies must be explicitly declared and isolated.",
+    options: [
+      { text: "Declared in a manifest (package.json, requirements.txt…) and installed in an isolated env", score: 2 },
+      { text: "Declared but not isolated (system-level packages)", score: 1 },
+      { text: "Assumed to be pre-installed on the server", score: 0 },
+      { text: "Dependencies are bundled directly in the repo", score: 1 }
+    ]
+  },
+  {
+    num: "III", name: "Config",
+    q: "Where does your app store configuration (DB URLs, API keys, feature flags)?",
+    hint: "Config must be stored in environment variables, not code.",
+    options: [
+      { text: "In environment variables, injected at runtime", score: 2 },
+      { text: "In config files checked into version control", score: 0 },
+      { text: "Hardcoded directly in the source code", score: 0 },
+      { text: "Mix of env vars and config files (not in VCS)", score: 1 }
+    ]
+  },
+  {
+    num: "IV", name: "Backing services",
+    q: "How does your app interact with databases, queues, or external APIs?",
+    hint: "Treat backing services as attached resources accessible via URL.",
+    options: [
+      { text: "Via URLs/credentials in env vars — easy to swap providers without code changes", score: 2 },
+      { text: "Connection details are in code but abstracted via config files", score: 1 },
+      { text: "Directly hardcoded, tightly coupled to specific providers", score: 0 },
+      { text: "Services are co-located on the same host, not via network", score: 0 }
+    ]
+  },
+  {
+    num: "V", name: "Build, release, run",
+    q: "How are your build, release, and run stages handled?",
+    hint: "Strictly separate build → release → run stages.",
+    options: [
+      { text: "CI/CD pipeline: build artifact → combine with config → deploy immutable release", score: 2 },
+      { text: "Build and deploy are separate but config is baked into the build", score: 1 },
+      { text: "Code is pushed directly to production and compiled/installed there", score: 0 },
+      { text: "No formal pipeline — manual steps each time", score: 0 }
+    ]
+  },
+  {
+    num: "VI", name: "Processes",
+    q: "How do your app processes handle state?",
+    hint: "Processes are stateless and share-nothing.",
+    options: [
+      { text: "Stateless — sessions/data stored in external services (Redis, DB, S3…)", score: 2 },
+      { text: "Mostly stateless, but sticky sessions are used for some flows", score: 1 },
+      { text: "State stored in-memory or on local disk between requests", score: 0 },
+      { text: "Single long-running process that holds all state", score: 0 }
+    ]
+  },
+  {
+    num: "VII", name: "Port binding",
+    q: "How does your app expose its services?",
+    hint: "The app is self-contained and exports services via port binding.",
+    options: [
+      { text: "App binds to a port and serves requests itself (e.g. via Express, Gunicorn)", score: 2 },
+      { text: "App relies on an external server (Apache mod_php, IIS) injecting it", score: 0 },
+      { text: "App is deployed as a serverless function — no persistent port", score: 1 },
+      { text: "Not sure how the app is served", score: 0 }
+    ]
+  },
+  {
+    num: "VIII", name: "Concurrency",
+    q: "How do you scale your app when load increases?",
+    hint: "Scale out by adding more processes, not by making one process bigger.",
+    options: [
+      { text: "Horizontal scaling — spin up more stateless process instances", score: 2 },
+      { text: "Vertical scaling only — upgrade server hardware/memory", score: 0 },
+      { text: "Threads within a single process to handle concurrency", score: 1 },
+      { text: "No scaling strategy — single instance always", score: 0 }
+    ]
+  },
+  {
+    num: "IX", name: "Disposability",
+    q: "How does your app handle startup and shutdown?",
+    hint: "Maximize robustness with fast startup and graceful shutdown.",
+    options: [
+      { text: "Fast startup, handles SIGTERM gracefully, finishes in-flight requests", score: 2 },
+      { text: "Startup is quick but shutdown is abrupt (kills connections)", score: 1 },
+      { text: "Startup takes minutes; no graceful shutdown", score: 0 },
+      { text: "No attention has been given to startup/shutdown behavior", score: 0 }
+    ]
+  },
+  {
+    num: "X", name: "Dev/prod parity",
+    q: "How similar are your development and production environments?",
+    hint: "Keep dev, staging, and prod as similar as possible.",
+    options: [
+      { text: "Near-identical — same OS, services, and versions (Docker, containers)", score: 2 },
+      { text: "Similar services but different versions or OS", score: 1 },
+      { text: "Dev uses mocks/stubs; prod uses real services", score: 0 },
+      { text: "Dev runs on local machine with no resemblance to prod", score: 0 }
+    ]
+  },
+  {
+    num: "XI", name: "Logs",
+    q: "How does your app handle logs?",
+    hint: "Treat logs as event streams — don't manage log files yourself.",
+    options: [
+      { text: "App writes to stdout/stderr; infra routes to a log aggregator (Datadog, ELK…)", score: 2 },
+      { text: "App writes log files that are shipped externally by an agent", score: 1 },
+      { text: "App manages log files and rotation itself", score: 0 },
+      { text: "No structured logging — print statements or nothing", score: 0 }
+    ]
+  },
+  {
+    num: "XII", name: "Admin processes",
+    q: "How do you run one-off admin tasks (migrations, scripts, data fixes)?",
+    hint: "Run admin tasks as one-off processes in the same environment.",
+    options: [
+      { text: "Same codebase, same env — run via a one-off command (e.g. heroku run, kubectl exec)", score: 2 },
+      { text: "Separate scripts run manually on a server with SSH", score: 1 },
+      { text: "Admin tasks are triggered via API endpoints in the app", score: 0 },
+      { text: "No standard process — ad hoc each time", score: 0 }
+    ]
+  }
+];
+
+let current = 0;
+let answers = new Array(12).fill(null);
+
+function scoreInfo(score, max) {
+  const r = score / max;
+  if (r >= 0.85) return { label: 'Excellent alignment', color: '#2A6B4F', cls: 'good', dotCls: 'dot-good' };
+  if (r >= 0.6)  return { label: 'Partial alignment',   color: '#BA7517', cls: 'partial', dotCls: 'dot-partial' };
+  return           { label: 'Needs attention',           color: '#A32D2D', cls: 'bad', dotCls: 'dot-bad' };
+}
+
+function render() {
+  const answered = answers.filter(a => a !== null).length;
+  const pct = Math.round((answered / 12) * 100);
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('pct').textContent = pct + '%';
+
+  if (current >= 12) { showResults(); return; }
+
+  document.getElementById('counter').textContent = `Question ${current + 1} of 12`;
+  const f = factors[current];
+  const sel = answers[current];
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="step active">
+      <div class="factor-tag">Factor ${f.num} &mdash; ${f.name}</div>
+      <p class="question">${f.q}</p>
+      <p class="hint">${f.hint}</p>
+      <div class="options">
+        ${f.options.map((o, i) => `
+          <button class="option${sel === i ? ' selected' : ''}" onclick="pick(${i})">${o.text}</button>
+        `).join('')}
+      </div>
+      <div class="nav">
+        <button class="btn" onclick="go(-1)" ${current === 0 ? 'disabled' : ''}>&larr; Back</button>
+        <button class="btn primary" onclick="go(1)" ${sel === null ? 'disabled' : ''}>
+          ${current === 11 ? 'See results &rarr;' : 'Next &rarr;'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function pick(i) { answers[current] = i; render(); }
+
+function go(dir) {
+  if (dir === 1 && answers[current] === null) return;
+  current = Math.max(0, Math.min(12, current + dir));
+  render();
+}
+
+function showResults() {
+  document.getElementById('counter').textContent = 'Results';
+  const total = answers.reduce((sum, a, i) => sum + (a !== null ? factors[i].options[a].score : 0), 0);
+  const { label, color } = scoreInfo(total, 24);
+
+  const desc = total >= 20
+    ? 'Your processes closely follow twelve-factor principles. Great foundation.'
+    : total >= 14
+    ? 'Good foundation — a few areas still need attention.'
+    : 'Several factors need work before reaching production readiness.';
+
+  const cards = factors.map((f, i) => {
+    const a = answers[i];
+    const sc = a !== null ? f.options[a].score : 0;
+    const { cls, dotCls } = scoreInfo(sc, 2);
+    return `
+      <div class="result-card ${cls}">
+        <div class="rc-top">
+          <div class="dot ${dotCls}"></div>
+          <span class="rc-tag">${f.num}</span>
+          <span class="rc-name">${f.name}</span>
+        </div>
+        <div class="rc-answer">${a !== null ? f.options[a].text : 'Not answered'}</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="step active">
+      <div class="score-banner">
+        <div class="score-big" style="color:${color}">${total}<span style="font-size:1.2rem;color:#999">/24</span></div>
+        <div>
+          <div class="score-meta-label">Alignment score</div>
+          <div class="score-verdict" style="color:${color}">${label}</div>
+          <div class="score-desc">${desc}</div>
+        </div>
+      </div>
+      <div class="results-grid">${cards}</div>
+      <div class="nav">
+        <button class="btn" onclick="restart()">Retake &circlearrowleft;</button>
+      </div>
+    </div>
+  `;
+}
+
+function restart() {
+  current = 0;
+  answers = new Array(12).fill(null);
+  render();
+}
+
+const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+let isDark = prefersDark;
+document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+
+function toggleTheme() {
+  isDark = !isDark;
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+}
+
+render();
+</script>
+</body>
+</html>
