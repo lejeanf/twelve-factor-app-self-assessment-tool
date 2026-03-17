@@ -46,12 +46,25 @@
       { "text": "Directly hardcoded, tightly coupled to specific providers", "score": 0 },
       { "text": "Services are co-located on the same host, not via network", "score": 0 }
     ]
+  },
+  {
+    "num": "V",
+    "name": "Build, release, run",
+    "question": "How are your build, release, and run stages handled?",
+    "hint": "Strictly separate build → release → run stages.",
+    "options": [
+      { "text": "CI/CD pipeline: build artifact → combine with config → deploy immutable release", "score": 2 },
+      { "text": "Build and deploy are separate but config is baked into the build", "score": 1 },
+      { "text": "Code is pushed directly to production and compiled/installed there", "score": 0 },
       { "text": "No formal pipeline — manual steps each time", "score": 0 }
     ]
   },
   {
     "num": "VI",
     "name": "Processes",
+    "question": "How do your app processes handle state?",
+    "hint": "Processes are stateless and share-nothing.",
+    "options": [
       { "text": "Stateless — sessions/data stored in external services (Redis, DB, S3…)", "score": 2 },
       { "text": "Mostly stateless, but sticky sessions are used for some flows", "score": 1 },
       { "text": "State stored in-memory or on local disk between requests", "score": 0 },
@@ -130,15 +143,4 @@
       { "text": "No standard process — ad hoc each time", "score": 0 }
     ]
   }
-]    "question": "How do your app processes handle state?",
-    "hint": "Processes are stateless and share-nothing.",
-    "options": [
-  },
-  {
-      { "text": "Code is pushed directly to production and compiled/installed there", "score": 0 },
-    "num": "V",
-    "name": "Build, release, run",
-      { "text": "Build and deploy are separate but config is baked into the build", "score": 1 },
-    "question": "How are your build, release, and run stages handled?",
-    "hint": "Strictly separate build → release → run stages.",
-    "options": [
+]
