@@ -1,14 +1,25 @@
-[
-  {
+{
     "num": "I",
     "name": "Codebase",
     "question": "How is your application's source code managed?",
     "hint": "One codebase tracked in version control, many deploys.",
     "options": [
-      { "text": "Single repo, deployed to multiple environments (dev/staging/prod)", "score": 2 },
-      { "text": "Multiple repos for the same logical app", "score": 0 },
-      { "text": "One repo, but only one environment", "score": 1 },
-      { "text": "No version control used", "score": 0 }
+      {
+        "text": "Single repo, deployed to multiple environments (dev/staging/prod)",
+        "score": 2
+      },
+      {
+        "text": "Multiple repos for the same logical app",
+        "score": 0
+      },
+      {
+        "text": "One repo, but only one environment",
+        "score": 1
+      },
+      {
+        "text": "No version control used",
+        "score": 0
+      }
     ]
   },
   {
@@ -17,10 +28,22 @@
     "question": "How do you handle your app's dependencies?",
     "hint": "Dependencies must be explicitly declared and isolated.",
     "options": [
-      { "text": "Declared in a manifest (package.json, requirements.txt, etc.) and installed in an isolated env", "score": 2 },
-      { "text": "Declared but not isolated (system-level packages)", "score": 1 },
-      { "text": "Assumed to be pre-installed on the server", "score": 0 },
-      { "text": "Dependencies are bundled directly in the repo", "score": 1 }
+      {
+        "text": "Declared in a manifest (package.json, requirements.txt, etc.) and installed in an isolated env",
+        "score": 2
+      },
+      {
+        "text": "Declared but not isolated (system-level packages)",
+        "score": 1
+      },
+      {
+        "text": "Assumed to be pre-installed on the server",
+        "score": 0
+      },
+      {
+        "text": "Dependencies are bundled directly in the repo",
+        "score": 1
+      }
     ]
   },
   {
@@ -29,10 +52,22 @@
     "question": "Where does your app store configuration (DB URLs, API keys, feature flags)?",
     "hint": "Config must be stored in environment variables, not code.",
     "options": [
-      { "text": "In environment variables, injected at runtime", "score": 2 },
-      { "text": "In config files checked into version control", "score": 0 },
-      { "text": "Hardcoded directly in the source code", "score": 0 },
-      { "text": "Mix of env vars and config files (not in VCS)", "score": 1 }
+      {
+        "text": "In environment variables, injected at runtime",
+        "score": 2
+      },
+      {
+        "text": "In config files checked into version control",
+        "score": 0
+      },
+      {
+        "text": "Hardcoded directly in the source code",
+        "score": 0
+      },
+      {
+        "text": "Mix of env vars and config files (not in VCS)",
+        "score": 1
+      }
     ]
   },
   {
@@ -41,10 +76,22 @@
     "question": "How does your app interact with databases, queues, or external APIs?",
     "hint": "Treat backing services as attached resources accessible via URL.",
     "options": [
-      { "text": "Via URLs/credentials in env vars - easy to swap providers without code changes", "score": 2 },
-      { "text": "Connection details are in code but abstracted via config files", "score": 1 },
-      { "text": "Directly hardcoded, tightly coupled to specific providers", "score": 0 },
-      { "text": "Services are co-located on the same host, not via network", "score": 0 }
+      {
+        "text": "Via URLs/credentials in env vars - easy to swap providers without code changes",
+        "score": 2
+      },
+      {
+        "text": "Connection details are in code but abstracted via config files",
+        "score": 1
+      },
+      {
+        "text": "Directly hardcoded, tightly coupled to specific providers",
+        "score": 0
+      },
+      {
+        "text": "Services are co-located on the same host, not via network",
+        "score": 0
+      }
     ]
   },
   {
@@ -53,10 +100,22 @@
     "question": "How are your build, release, and run stages handled?",
     "hint": "Strictly separate build -> release -> run stages.",
     "options": [
-      { "text": "CI/CD pipeline: build artifact -> combine with config -> deploy immutable release", "score": 2 },
-      { "text": "Build and deploy are separate but config is baked into the build", "score": 1 },
-      { "text": "Code is pushed directly to production and compiled/installed there", "score": 0 },
-      { "text": "No formal pipeline - manual steps each time", "score": 0 }
+      {
+        "text": "CI/CD pipeline: build artifact -> combine with config -> deploy immutable release",
+        "score": 2
+      },
+      {
+        "text": "Build and deploy are separate but config is baked into the build",
+        "score": 1
+      },
+      {
+        "text": "Code is pushed directly to production and compiled/installed there",
+        "score": 0
+      },
+      {
+        "text": "No formal pipeline - manual steps each time",
+        "score": 0
+      }
     ]
   },
   {
@@ -65,10 +124,22 @@
     "question": "How do your app processes handle state?",
     "hint": "Processes are stateless and share-nothing.",
     "options": [
-      { "text": "Stateless - sessions/data stored in external services (Redis, DB, S3, etc.)", "score": 2 },
-      { "text": "Mostly stateless, but sticky sessions are used for some flows", "score": 1 },
-      { "text": "State stored in-memory or on local disk between requests", "score": 0 },
-      { "text": "Single long-running process that holds all state", "score": 0 }
+      {
+        "text": "Stateless - sessions/data stored in external services (Redis, DB, S3, etc.)",
+        "score": 2
+      },
+      {
+        "text": "Mostly stateless, but sticky sessions are used for some flows",
+        "score": 1
+      },
+      {
+        "text": "State stored in-memory or on local disk between requests",
+        "score": 0
+      },
+      {
+        "text": "Single long-running process that holds all state",
+        "score": 0
+      }
     ]
   },
   {
@@ -77,10 +148,22 @@
     "question": "How does your app expose its services?",
     "hint": "The app is self-contained and exports services via port binding.",
     "options": [
-      { "text": "App binds to a port and serves requests itself (e.g. via Express, Gunicorn)", "score": 2 },
-      { "text": "App relies on an external server (Apache mod_php, IIS) injecting it", "score": 0 },
-      { "text": "App is deployed as a serverless function - no persistent port", "score": 1 },
-      { "text": "Not sure how the app is served", "score": 0 }
+      {
+        "text": "App binds to a port and serves requests itself (e.g. via Express, Gunicorn)",
+        "score": 2
+      },
+      {
+        "text": "App relies on an external server (Apache mod_php, IIS) injecting it",
+        "score": 0
+      },
+      {
+        "text": "App is deployed as a serverless function - no persistent port",
+        "score": 1
+      },
+      {
+        "text": "Not sure how the app is served",
+        "score": 0
+      }
     ]
   },
   {
@@ -89,10 +172,22 @@
     "question": "How do you scale your app when load increases?",
     "hint": "Scale out by adding more processes, not by making one process bigger.",
     "options": [
-      { "text": "Horizontal scaling - spin up more stateless process instances", "score": 2 },
-      { "text": "Vertical scaling only - upgrade server hardware/memory", "score": 0 },
-      { "text": "Threads within a single process to handle concurrency", "score": 1 },
-      { "text": "No scaling strategy - single instance always", "score": 0 }
+      {
+        "text": "Horizontal scaling - spin up more stateless process instances",
+        "score": 2
+      },
+      {
+        "text": "Vertical scaling only - upgrade server hardware/memory",
+        "score": 0
+      },
+      {
+        "text": "Threads within a single process to handle concurrency",
+        "score": 1
+      },
+      {
+        "text": "No scaling strategy - single instance always",
+        "score": 0
+      }
     ]
   },
   {
@@ -101,10 +196,22 @@
     "question": "How does your app handle startup and shutdown?",
     "hint": "Maximize robustness with fast startup and graceful shutdown.",
     "options": [
-      { "text": "Fast startup, handles SIGTERM gracefully, finishes in-flight requests", "score": 2 },
-      { "text": "Startup is quick but shutdown is abrupt (kills connections)", "score": 1 },
-      { "text": "Startup takes minutes; no graceful shutdown", "score": 0 },
-      { "text": "No attention has been given to startup/shutdown behavior", "score": 0 }
+      {
+        "text": "Fast startup, handles SIGTERM gracefully, finishes in-flight requests",
+        "score": 2
+      },
+      {
+        "text": "Startup is quick but shutdown is abrupt (kills connections)",
+        "score": 1
+      },
+      {
+        "text": "Startup takes minutes; no graceful shutdown",
+        "score": 0
+      },
+      {
+        "text": "No attention has been given to startup/shutdown behavior",
+        "score": 0
+      }
     ]
   },
   {
@@ -113,10 +220,22 @@
     "question": "How similar are your development and production environments?",
     "hint": "Keep dev, staging, and prod as similar as possible.",
     "options": [
-      { "text": "Near-identical - same OS, services, and versions (Docker, containers)", "score": 2 },
-      { "text": "Similar services but different versions or OS", "score": 1 },
-      { "text": "Dev uses mocks/stubs; prod uses real services", "score": 0 },
-      { "text": "Dev runs on local machine with no resemblance to prod", "score": 0 }
+      {
+        "text": "Near-identical - same OS, services, and versions (Docker, containers)",
+        "score": 2
+      },
+      {
+        "text": "Similar services but different versions or OS",
+        "score": 1
+      },
+      {
+        "text": "Dev uses mocks/stubs; prod uses real services",
+        "score": 0
+      },
+      {
+        "text": "Dev runs on local machine with no resemblance to prod",
+        "score": 0
+      }
     ]
   },
   {
@@ -125,10 +244,22 @@
     "question": "How does your app handle logs?",
     "hint": "Treat logs as event streams - do not manage log files yourself.",
     "options": [
-      { "text": "App writes to stdout/stderr; infra routes to a log aggregator (Datadog, ELK, etc.)", "score": 2 },
-      { "text": "App writes log files that are shipped externally by an agent", "score": 1 },
-      { "text": "App manages log files and rotation itself", "score": 0 },
-      { "text": "No structured logging - print statements or nothing", "score": 0 }
+      {
+        "text": "App writes to stdout/stderr; infra routes to a log aggregator (Datadog, ELK, etc.)",
+        "score": 2
+      },
+      {
+        "text": "App writes log files that are shipped externally by an agent",
+        "score": 1
+      },
+      {
+        "text": "App manages log files and rotation itself",
+        "score": 0
+      },
+      {
+        "text": "No structured logging - print statements or nothing",
+        "score": 0
+      }
     ]
   },
   {
@@ -137,10 +268,21 @@
     "question": "How do you run one-off admin tasks (migrations, scripts, data fixes)?",
     "hint": "Run admin tasks as one-off processes in the same environment.",
     "options": [
-      { "text": "Same codebase, same env - run via a one-off command (e.g. heroku run, kubectl exec)", "score": 2 },
-      { "text": "Separate scripts run manually on a server with SSH", "score": 1 },
-      { "text": "Admin tasks are triggered via API endpoints in the app", "score": 0 },
-      { "text": "No standard process - ad hoc each time", "score": 0 }
+      {
+        "text": "Same codebase, same env - run via a one-off command (e.g. heroku run, kubectl exec)",
+        "score": 2
+      },
+      {
+        "text": "Separate scripts run manually on a server with SSH",
+        "score": 1
+      },
+      {
+        "text": "Admin tasks are triggered via API endpoints in the app",
+        "score": 0
+      },
+      {
+        "text": "No standard process - ad hoc each time",
+        "score": 0
+      }
     ]
   }
-]
